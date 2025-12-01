@@ -1,32 +1,32 @@
 import React from 'react';
 import { NeuCard } from './NeuCard';
-import { TrendingUp, ShieldCheck, Microscope } from 'lucide-react';
+import { TrendingUp, ShieldCheck, Microscope, PackageX, History, AlertCircle } from 'lucide-react';
 
 export const ClientUseCases: React.FC = () => {
   const cases = [
     {
-      industry: "Aerospace Manufacturing",
-      title: "Traceability at Scale",
-      challenge: "Manual documentation for certified parts was slowing down production cycles and increasing audit preparation time.",
-      solution: "Implemented BuildQueue's Digital Passport to auto-generate full genealogy reports for every printed flight part.",
-      result: "100% Audit Readiness",
-      icon: <ShieldCheck size={24} className="text-neu-teal" />
+      industry: "Aerospace Component Supplier",
+      title: "Achieved 30% Reduction in Inventory Errors",
+      challenge: "Manual tracking in Excel led to frequent inventory discrepancies, causing production delays and costly overstock of certain materials.",
+      solution: "Switched to BuildQueue's real-time digital inventory, providing a single source of truth for all materials and components.",
+      result: "Reduced lead time by 25%",
+      icon: <PackageX size={24} className="text-neu-teal" />
     },
     {
-      industry: "Rapid Prototyping Bureau",
-      title: "Automated Scheduling",
-      challenge: "Managing 50+ machines with spreadsheets led to low utilization, frequent conflicts, and missed deadlines.",
-      solution: "Used Smart Scheduler to optimize machine uptime, manage maintenance, and assign orders automatically.",
-      result: "40% Output Increase",
+      industry: "SME Metal-Parts Manufacturer",
+      title: "Reduced Manual Data Entry by 50%",
+      challenge: "Operators spent hours manually logging production data, leading to errors and taking time away from value-added tasks.",
+      solution: "Automated data capture and production reporting with BuildQueue, freeing up operators to focus on quality and output.",
+      result: "Freed up 20 hours of operator time per week",
       icon: <TrendingUp size={24} className="text-neu-purple" />
     },
     {
-      industry: "Medical Devices",
-      title: "Quality Control",
-      challenge: "Inconsistent visual inspections across different shifts resulted in high scrap rates and compliance risks.",
-      solution: "Deployed Standardized QC Checkpoint Templates with mandatory visual references for operators.",
-      result: "15% Scrap Reduction",
-      icon: <Microscope size={24} className="text-neu-teal" />
+      industry: "Medical Device Prototyping Lab",
+      title: "Streamlined Quality Control and Compliance",
+      challenge: "Struggled to maintain consistent quality control and traceability, putting compliance at risk.",
+      solution: "Implemented digital passports and standardized QC workflows in BuildQueue, ensuring every part is traceable and meets quality standards.",
+      result: "Passed all regulatory audits with zero findings",
+      icon: <ShieldCheck size={24} className="text-neu-teal" />
     }
   ];
 
@@ -34,9 +34,9 @@ export const ClientUseCases: React.FC = () => {
     <section id="use-cases" className="py-20 px-4 bg-neu-base">
       <div className="max-w-7xl mx-auto">
          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-extrabold text-neu-text mb-4">Client Success Stories</h2>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-neu-text mb-4">Real Results from Real Manufacturers</h2>
             <p className="text-gray-500 max-w-2xl mx-auto">
-                See how manufacturing leaders are transforming their operations with BuildQueue.
+                Our clients have transformed their operations and achieved significant improvements in efficiency, quality, and traceability.
             </p>
         </div>
 
@@ -57,11 +57,11 @@ export const ClientUseCases: React.FC = () => {
                     
                     <div className="mb-6 space-y-4 flex-grow">
                         <div>
-                            <p className="text-xs font-bold text-neu-purple mb-1 uppercase tracking-wider">Challenge</p>
+                            <p className="text-xs font-bold text-neu-purple mb-1 uppercase tracking-wider">The Challenge</p>
                             <p className="text-sm text-gray-500 leading-relaxed">{useCase.challenge}</p>
                         </div>
                          <div>
-                            <p className="text-xs font-bold text-neu-teal mb-1 uppercase tracking-wider">Solution</p>
+                            <p className="text-xs font-bold text-neu-teal mb-1 uppercase tracking-wider">The Solution</p>
                             <p className="text-sm text-gray-500 leading-relaxed">{useCase.solution}</p>
                         </div>
                     </div>

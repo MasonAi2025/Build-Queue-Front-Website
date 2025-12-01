@@ -1,10 +1,11 @@
 import React from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { PainPoints } from './components/PainPoints';
 import { Features } from './components/Features';
 import { Workflow } from './components/Workflow';
 import { ClientUseCases } from './components/ClientUseCases';
-import { Partnerships } from './components/Partnerships';
+import { Blog } from './components/Blog';
 import { FAQ } from './components/FAQ';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
@@ -15,10 +16,11 @@ const App: React.FC = () => {
       <Navbar />
       <main>
         <Hero />
+        <PainPoints />
         <Features />
         <Workflow />
         <ClientUseCases />
-        <Partnerships />
+        <Blog />
         <FAQ />
         <Contact />
       </main>

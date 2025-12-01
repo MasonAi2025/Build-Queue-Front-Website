@@ -2,43 +2,7 @@ import React, { useState } from 'react';
 import { NeuCard } from './NeuCard';
 import { NeuInput, NeuTextArea } from './NeuInput';
 import { NeuButton } from './NeuButton';
-import { Mail, Phone, MapPin, Loader2, CheckCircle } from 'lucide-react';
-
-// INSTRUCTIONS FOR GOOGLE SHEETS INTEGRATION:
-// 1. Go to your Google Apps Script editor.
-// 2. Replace the code with the following robust version:
-/*
-function doPost(e) {
-  var lock = LockService.getScriptLock();
-  lock.tryLock(10000);
-
-  try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    var data;
-
-    // Robust way to get data: Check if it's JSON, otherwise use parameters (FormData)
-    if (e.postData && e.postData.type == "application/json") {
-      data = JSON.parse(e.postData.contents);
-    } else {
-      // This handles the new FormData approach
-      data = e.parameter;
-    }
-
-    sheet.appendRow([new Date(), data.name, data.email, data.company, data.type, data.message]);
-
-    return ContentService.createTextOutput(JSON.stringify({ 'result': 'success' }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (e) {
-    return ContentService.createTextOutput(JSON.stringify({ 'result': 'error', 'error': e }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } finally {
-    lock.releaseLock();
-  }
-}
-*/
-// 3. Click Deploy > New Deployment.
-// 4. Ensure "Who has access" is set to "Anyone".
-// 5. Copy the NEW Web App URL and paste it below.
+import { Mail, Phone, MapPin, Loader2, CheckCircle, CheckSquare } from 'lucide-react';
 
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwtCvrqk3iEnKeE_nqJbXfqGVH-NNDu2kYevhdC9kRqNEQoQRe43z3JwlD6JyV_Iu4O2A/exec'; 
 
@@ -62,7 +26,7 @@ export const Contact: React.FC = () => {
     name: '', 
     email: '', 
     company: '', 
-    type: 'Request Demo', // Default value updated to match primary CTA
+    type: 'Request Demo', 
     message: '' 
   });
   
@@ -77,13 +41,12 @@ export const Contact: React.FC = () => {
         return undefined;
       case 'email':
         if (!value.trim()) return 'Email is required';
-        // Basic email regex
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(value)) return 'Please enter a valid email address';
         return undefined;
       case 'message':
         if (!value.trim()) return 'Message is required';
-        if (value.trim().length < 10) return 'Message must be at least 10 characters';
+        if (value.trim().length < 10) return 'Tell us a bit more about your needs.';
         return undefined;
       default:
         return undefined;
@@ -100,24 +63,15 @@ export const Contact: React.FC = () => {
     const newErrors: FormErrors = {};
     let isValid = true;
 
-    // Validate all fields
-    const nameError = validateField('name', formState.name);
-    if (nameError) {
-      newErrors.name = nameError;
-      isValid = false;
-    }
+    const fieldsToValidate: (keyof FormState)[] = ['name', 'email', 'message'];
 
-    const emailError = validateField('email', formState.email);
-    if (emailError) {
-      newErrors.email = emailError;
-      isValid = false;
-    }
-
-    const messageError = validateField('message', formState.message);
-    if (messageError) {
-      newErrors.message = messageError;
-      isValid = false;
-    }
+    fieldsToValidate.forEach(field => {
+      const error = validateField(field, formState[field]);
+      if (error) {
+        newErrors[field as keyof FormErrors] = error;
+        isValid = false;
+      }
+    });
 
     setErrors(newErrors);
     return isValid;
@@ -133,18 +87,11 @@ export const Contact: React.FC = () => {
     setStatus('submitting');
 
     try {
-      // Convert state to FormData. 
-      // This is much more reliable for Google Apps Script than raw JSON
       const formData = new FormData();
-      formData.append('name', formState.name);
-      formData.append('email', formState.email);
-      formData.append('company', formState.company);
-      formData.append('type', formState.type);
-      formData.append('message', formState.message);
+      Object.keys(formState).forEach(key => {
+        formData.append(key, formState[key as keyof FormState]);
+      });
 
-      // We use no-cors. This allows the request to go through to Google without blocking.
-      // However, it means we won't get a readable response (response.ok will be false/opaque).
-      // We assume if it doesn't throw a network error, it worked.
       await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors', 
@@ -164,57 +111,43 @@ export const Contact: React.FC = () => {
     const { name, value } = e.target;
     setFormState({ ...formState, [name]: value });
     
-    // Clear error for this field when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
     }
   };
+  
+  const demoBenefits = [
+      "A live walkthrough tailored to your specific challenges.",
+      "An action plan to reduce inventory errors and boost output.",
+      "A no-obligation pricing and implementation roadmap.",
+      "An opportunity to have your questions answered by an expert."
+  ];
 
   return (
-    <section id="contact" className="py-20 px-4">
+    <section id="contact" className="py-20 px-4 bg-neu-base">
       <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
             
-            {/* Contact Info */}
+            {/* Contact Info & Demo Benefits */}
             <div className="space-y-8">
                 <div>
-                    <h2 className="text-3xl md:text-5xl font-extrabold text-neu-text mb-6">Let's Connect</h2>
-                    <p className="text-gray-500 text-lg">
-                        Ready to modernize your manufacturing workflow? Request a comprehensive quotation or partnership discussion with BuildQueue Ltd.
+                    <h2 className="text-3xl md:text-5xl font-extrabold text-neu-text mb-6">Ready to Eliminate Manufacturing Chaos?</h2>
+                    <p className="text-gray-500 text-lg max-w-xl">
+                        Schedule a personalized demo with one of our experts to see how BuildQueue can dramatically improve your efficiency, traceability, and bottom line. See the platform in action and get all your questions answered.
                     </p>
                 </div>
 
-                <div className="space-y-6">
-                    <NeuCard className="p-6 flex items-center gap-6">
-                        <div className="w-12 h-12 rounded-full bg-neu-base shadow-neu-btn flex items-center justify-center text-neu-purple">
-                            <Mail size={20} />
-                        </div>
-                        <div>
-                            <h4 className="font-bold text-neu-text">Email Us</h4>
-                            <a href="mailto:integrations@buildqueue.io" className="text-gray-500 hover:text-neu-purple transition-colors">integrations@buildqueue.io</a>
-                        </div>
-                    </NeuCard>
-
-                    <NeuCard className="p-6 flex items-center gap-6">
-                        <div className="w-12 h-12 rounded-full bg-neu-base shadow-neu-btn flex items-center justify-center text-neu-teal">
-                            <Phone size={20} />
-                        </div>
-                        <div>
-                            <h4 className="font-bold text-neu-text">Call Us</h4>
-                            <p className="text-gray-500">+44 (0) 161 123 4567</p>
-                        </div>
-                    </NeuCard>
-                    
-                    <NeuCard className="p-6 flex items-center gap-6">
-                        <div className="w-12 h-12 rounded-full bg-neu-base shadow-neu-btn flex items-center justify-center text-neu-purple">
-                            <MapPin size={20} />
-                        </div>
-                        <div>
-                            <h4 className="font-bold text-neu-text">HQ</h4>
-                            <p className="text-gray-500">Manchester, United Kingdom</p>
-                        </div>
-                    </NeuCard>
-                </div>
+                <NeuCard className="p-8">
+                    <h3 className="text-xl font-bold text-neu-text mb-6">In your personalized demo, you'll discover how to:</h3>
+                    <div className="space-y-5">
+                        {demoBenefits.map((benefit, index) => (
+                             <div key={index} className="flex items-start gap-3">
+                                <CheckSquare size={20} className="text-neu-teal mt-1 flex-shrink-0" />
+                                <p className="text-gray-500">{benefit}</p>
+                            </div>
+                        ))}
+                    </div>
+                </NeuCard>
             </div>
 
             {/* Form */}
@@ -224,13 +157,13 @@ export const Contact: React.FC = () => {
                         <div className="w-20 h-20 rounded-full bg-neu-base shadow-neu-btn flex items-center justify-center text-green-500 mb-6">
                             <CheckCircle size={40} />
                         </div>
-                        <h3 className="text-2xl font-bold text-neu-text mb-2">Message Sent!</h3>
-                        <p className="text-gray-500 mb-6">We'll get back to you shortly.</p>
+                        <h3 className="text-2xl font-bold text-neu-text mb-2">Demo Request Sent!</h3>
+                        <p className="text-gray-500 mb-6">Our team will be in touch shortly.</p>
                         <NeuButton onClick={() => setStatus('idle')}>Send Another</NeuButton>
                     </div>
                 ) : null}
 
-                <h3 className="text-2xl font-bold text-neu-text mb-8">Get in Touch</h3>
+                <h3 className="text-2xl font-bold text-neu-text mb-8">Schedule Your Free Demo</h3>
                 <form onSubmit={handleSubmit} noValidate>
                     <div className="grid md:grid-cols-2 gap-4">
                         <NeuInput 
@@ -249,7 +182,6 @@ export const Contact: React.FC = () => {
                             value={formState.company}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            // Company is optional, so we typically don't validate unless specific requirements exist
                         />
                     </div>
                     
@@ -264,32 +196,11 @@ export const Contact: React.FC = () => {
                         error={errors.email}
                     />
 
-                    {/* Inquiry Type Dropdown */}
-                    <div className="flex flex-col gap-2 mb-4">
-                        <label className="text-sm font-bold text-neu-text ml-2">Inquiry Type</label>
-                        <div className="relative">
-                            <select
-                                name="type"
-                                value={formState.type}
-                                onChange={handleChange}
-                                className="w-full bg-neu-base rounded-xl px-4 py-3 outline-none text-neu-text shadow-neu-in focus:ring-2 focus:ring-neu-accent/20 transition-all appearance-none cursor-pointer"
-                            >
-                                <option value="Request Demo">Request Demo</option>
-                                <option value="Integration Quote">Integration Quotation</option>
-                                <option value="Partnership">Partnership Discussion</option>
-                                <option value="General Inquiry">General Inquiry</option>
-                            </select>
-                            <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
-                                <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
-                            </div>
-                        </div>
-                    </div>
-
                     <NeuTextArea 
-                        label="Message" 
+                        label="What are your biggest manufacturing challenges?" 
                         name="message" 
                         rows={4} 
-                        placeholder="Tell us about your needs..." 
+                        placeholder="e.g., tracking orders, managing inventory, quality control..." 
                         value={formState.message}
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -304,7 +215,7 @@ export const Contact: React.FC = () => {
                                     Sending...
                                 </>
                             ) : (
-                                'Send Request'
+                                'Request My Free Demo'
                             )}
                         </NeuButton>
                     </div>

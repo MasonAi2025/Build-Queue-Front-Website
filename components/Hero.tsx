@@ -37,10 +37,10 @@ export const Hero: React.FC = () => {
             MANUFACTURING OS V1.0
           </div>
           <h1 className="text-4xl md:text-6xl font-extrabold text-neu-text leading-tight">
-            The Digital Passport for <span className="text-transparent bg-clip-text bg-neu-gradient">Modern Manufacturing</span>
+          From Chaos to Control: The <span className="text-transparent bg-clip-text bg-neu-gradient">Modern Manufacturing OS</span>
           </h1>
           <p className="text-lg text-gray-500 font-medium max-w-xl mx-auto lg:mx-0">
-            Streamline your print management workflows, automate production planning, and generate comprehensive digital passports for every part produced.
+          BuildQueue is a Manufacturing Execution System (MES) designed to bring clarity, control, and traceability to your entire production process. Say goodbye to spreadsheet chaos and hello to streamlined, automated, and error-free manufacturing.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
             <NeuButton onClick={handleRequestDemo}>

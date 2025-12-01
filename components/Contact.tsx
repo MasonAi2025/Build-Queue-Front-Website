@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { NeuCard } from './NeuCard';
 import { NeuInput, NeuTextArea } from './NeuInput';
@@ -7,6 +8,7 @@ import { Mail, Phone, MapPin, Loader2, CheckCircle, CheckSquare } from 'lucide-r
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwtCvrqk3iEnKeE_nqJbXfqGVH-NNDu2kYevhdC9kRqNEQoQRe43z3JwlD6JyV_Iu4O2A/exec'; 
 
 interface FormState {
+  date: string;
   name: string;
   email: string;
   company: string;
@@ -15,14 +17,15 @@ interface FormState {
 }
 
 interface FormErrors {
+  date?: string;
   name?: string;
   email?: string;
-  company?: string;
   message?: string;
 }
 
 export const Contact: React.FC = () => {
   const [formState, setFormState] = useState<FormState>({ 
+    date: new Date().toISOString().split('T')[0],
     name: '', 
     email: '', 
     company: '', 
@@ -35,6 +38,9 @@ export const Contact: React.FC = () => {
 
   const validateField = (name: string, value: string): string | undefined => {
     switch (name) {
+      case 'date':
+        if (!value.trim()) return 'Date is required';
+        return undefined;
       case 'name':
         if (!value.trim()) return 'Name is required';
         if (value.trim().length < 2) return 'Name must be at least 2 characters';
@@ -46,7 +52,7 @@ export const Contact: React.FC = () => {
         return undefined;
       case 'message':
         if (!value.trim()) return 'Message is required';
-        if (value.trim().length < 10) return 'Tell us a bit more about your needs.';
+        if (value.trim().length < 10) return 'Message must be at least 10 characters.';
         return undefined;
       default:
         return undefined;
@@ -63,7 +69,7 @@ export const Contact: React.FC = () => {
     const newErrors: FormErrors = {};
     let isValid = true;
 
-    const fieldsToValidate: (keyof FormState)[] = ['name', 'email', 'message'];
+    const fieldsToValidate: (keyof FormState)[] = ['date', 'name', 'email', 'message'];
 
     fieldsToValidate.forEach(field => {
       const error = validateField(field, formState[field]);
@@ -99,7 +105,7 @@ export const Contact: React.FC = () => {
       });
 
       setStatus('success');
-      setFormState({ name: '', email: '', company: '', type: 'Request Demo', message: '' });
+      setFormState({ date: new Date().toISOString().split('T')[0], name: '', email: '', company: '', type: 'Request Demo', message: '' });
       setErrors({});
     } catch (error) {
       console.error("Error submitting form", error);
@@ -128,7 +134,6 @@ export const Contact: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
             
-            {/* Contact Info & Demo Benefits */}
             <div className="space-y-8">
                 <div>
                     <h2 className="text-3xl md:text-5xl font-extrabold text-neu-text mb-6">Ready to Eliminate Manufacturing Chaos?</h2>
@@ -150,22 +155,30 @@ export const Contact: React.FC = () => {
                 </NeuCard>
             </div>
 
-            {/* Form */}
             <NeuCard className="p-8 md:p-10 relative">
                 {status === 'success' ? (
                     <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-neu-base/90 rounded-[2rem] animate-fade-in-down">
                         <div className="w-20 h-20 rounded-full bg-neu-base shadow-neu-btn flex items-center justify-center text-green-500 mb-6">
                             <CheckCircle size={40} />
                         </div>
-                        <h3 className="text-2xl font-bold text-neu-text mb-2">Demo Request Sent!</h3>
+                        <h3 className="text-2xl font-bold text-neu-text mb-2">Request Sent!</h3>
                         <p className="text-gray-500 mb-6">Our team will be in touch shortly.</p>
                         <NeuButton onClick={() => setStatus('idle')}>Send Another</NeuButton>
                     </div>
                 ) : null}
 
-                <h3 className="text-2xl font-bold text-neu-text mb-8">Schedule Your Free Demo</h3>
+                <h3 className="text-2xl font-bold text-neu-text mb-8">Get in Touch</h3>
                 <form onSubmit={handleSubmit} noValidate>
                     <div className="grid md:grid-cols-2 gap-4">
+                        <NeuInput 
+                            label="Date" 
+                            name="date" 
+                            type="date"
+                            value={formState.date}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={errors.date}
+                        />
                         <NeuInput 
                             label="Full Name" 
                             name="name" 
@@ -174,6 +187,19 @@ export const Contact: React.FC = () => {
                             onChange={handleChange}
                             onBlur={handleBlur}
                             error={errors.name}
+                        />
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                         <NeuInput 
+                            label="Email Address" 
+                            name="email" 
+                            type="email" 
+                            placeholder="john@example.com" 
+                            value={formState.email}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={errors.email}
                         />
                          <NeuInput 
                             label="Company Name" 
@@ -184,23 +210,28 @@ export const Contact: React.FC = () => {
                             onBlur={handleBlur}
                         />
                     </div>
-                    
-                    <NeuInput 
-                        label="Email Address" 
-                        name="email" 
-                        type="email" 
-                        placeholder="john@example.com" 
-                        value={formState.email}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={errors.email}
-                    />
+
+                    <div className="mb-4">
+                        <label htmlFor="type" className="block text-sm font-bold text-neu-text mb-2 mt-4">Request Type</label>
+                        <select
+                            id="type"
+                            name="type"
+                            value={formState.type}
+                            onChange={handleChange}
+                            className="w-full bg-neu-base shadow-neu-inner rounded-xl px-4 py-3 text-neu-text placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-neu-purple"
+                        >
+                            <option>Request Demo</option>
+                            <option>Integration Quote</option>
+                            <option>General Inquiry</option>
+                            <option>Partnership</option>
+                        </select>
+                    </div>
 
                     <NeuTextArea 
-                        label="What are your biggest manufacturing challenges?" 
+                        label="Message" 
                         name="message" 
                         rows={4} 
-                        placeholder="e.g., tracking orders, managing inventory, quality control..." 
+                        placeholder="Your message..."
                         value={formState.message}
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -215,7 +246,7 @@ export const Contact: React.FC = () => {
                                     Sending...
                                 </>
                             ) : (
-                                'Request My Free Demo'
+                                'Submit Request'
                             )}
                         </NeuButton>
                     </div>

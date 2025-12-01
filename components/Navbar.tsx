@@ -1,23 +1,37 @@
+
 import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { NeuButton } from './NeuButton';
 import { BrandLogo } from './BrandLogo';
 
 export const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const navLinks = [
     { name: 'Features', href: '#features' },
     { name: 'Workflow', href: '#workflow' },
     { name: 'Partnerships', href: '#partnerships' },
-    { name: 'About', href: '#about' }, // Assuming 'About' currently maps to footer or just stays as placeholder, keeping as is from previous file
+    { name: 'Blog', href: '#blog' },
   ];
 
-  const handleScroll = (id: string) => {
+  const handleNavClick = (id: string) => {
     setIsOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    if (location.pathname === '/') {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      navigate('/');
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100); // A small delay is needed to allow the page to change and render
     }
   };
 
@@ -25,25 +39,25 @@ export const Navbar: React.FC = () => {
     <nav className="fixed w-full z-50 px-4 py-4 md:px-8 bg-neu-base/90 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-3 cursor-pointer group" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+        <Link to="/" className="flex items-center gap-3 cursor-pointer group">
            <div className="w-12 h-12 rounded-xl bg-neu-base shadow-neu-btn flex items-center justify-center transition-transform group-hover:scale-105">
               <BrandLogo size={32} />
            </div>
            <span className="text-2xl font-extrabold text-neu-text tracking-tight group-hover:text-neu-purple transition-colors">BuildQueue</span>
-        </div>
+        </Link>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <button 
               key={link.name} 
-              onClick={() => handleScroll(link.href.substring(1))}
+              onClick={() => handleNavClick(link.href.substring(1))}
               className="text-neu-text font-bold hover:text-neu-purple transition-colors"
             >
               {link.name}
             </button>
           ))}
-          <NeuButton onClick={() => handleScroll('contact')} variant="primary" className="text-sm">
+          <NeuButton onClick={() => handleNavClick('contact')} variant="primary" className="text-sm">
             Integration Quote
           </NeuButton>
         </div>
@@ -62,13 +76,13 @@ export const Navbar: React.FC = () => {
           {navLinks.map((link) => (
             <button 
               key={link.name} 
-              onClick={() => handleScroll(link.href.substring(1))}
+              onClick={() => handleNavClick(link.href.substring(1))}
               className="text-left py-3 px-4 rounded-xl shadow-neu-btn text-neu-text font-semibold active:shadow-neu-btn-active active:text-neu-purple"
             >
               {link.name}
             </button>
           ))}
-          <NeuButton onClick={() => handleScroll('contact')} className="w-full mt-2">
+          <NeuButton onClick={() => handleNavClick('contact')} className="w-full mt-2">
             Request Quote
           </NeuButton>
         </div>
